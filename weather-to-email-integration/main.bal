@@ -1,6 +1,7 @@
 import ballerina/http;
 import wso2/choreo.sendemail;
 import ballerina/io;
+import ballerina/random;
 
 const string ENDPOINT_URL = "https://api.openweathermap.org/data/2.5";
 const int StepCount = 7; // number of steps to be fetch from the API
@@ -16,6 +17,10 @@ http:Client httpclient = check new (ENDPOINT_URL);
 sendemail:Client emailClient = check new ();
 
 public function main() returns error? {
+    // Introduce a random failure probability of 50%
+    if random:nextFloat() < 0.5 {
+        return error("Random failure occurred.");
+    }
 
     // Get the weather forecast for the next 24H
     http:Response response = check httpclient->/forecast(lat = latitude, lon = longitude, cnt = StepCount, appid = apiKey);
